@@ -10,7 +10,6 @@ class Carta extends Model
         'nome',
         'descricao',
         'imagem_url',
-        'quantidade',
         'preco',
         'tipo_id',
     ];

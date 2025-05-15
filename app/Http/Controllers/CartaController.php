@@ -23,7 +23,6 @@ class CartaController extends Controller
                 'nome' => 'required',
                 'descricao' => 'required',
                 'imagem_url' => 'required',
-                'quantidade' => 'required|numeric',
                 'preco' => 'required|numeric',
                 'tipo_id' => 'required|exists:carta_tipos,id',
             ]);
