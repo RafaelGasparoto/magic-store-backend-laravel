@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('nome');
             $table->string('descricao');
             $table->string('imagem_url');
-            $table->float('quantidade');
             $table->float('preco');
             $table->foreignId('tipo_id')->constrained('carta_tipos');
 
