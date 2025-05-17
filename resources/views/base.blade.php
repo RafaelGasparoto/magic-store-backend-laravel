@@ -27,6 +27,7 @@
                         <a class="nav-link" href="{{ route('carrinho.show') }}">Carrinho</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="{{ route('perfil', 1) }}">Perfil</a>
                     </li>
                 </ul>
             </div>

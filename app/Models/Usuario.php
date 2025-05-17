@@ -9,4 +9,9 @@ class Usuario extends Model
     protected $fillable = [
         'nome',
     ];
+
+    public function pedidos()
+    {
+        return $this->hasMany(Pedido::class);
+    }
 }
