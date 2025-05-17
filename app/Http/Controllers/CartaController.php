@@ -12,34 +12,33 @@ class CartaController extends Controller
 {
     public function index()
     {
-        $cartas = Carta::with('tipo')->get();
-        return response()->json($cartas);
+        $tipos = CartaTipo::all();
+
+        return view('cartas-cadastro', compact('tipos'));
     }
 
     public function store(Request $request)
     {
-        try {
-            $request->validate([
-                'nome' => 'required',
-                'descricao' => 'required',
-                'imagem_url' => 'required',
-                'preco' => 'required|numeric',
-                'tipo_id' => 'required|exists:carta_tipos,id',
-            ]);
+        $request->validate([
+            'nome' => 'required',
+            'descricao' => 'required',
+            'imagem_url' => 'required',
+            'preco' => 'required|numeric',
+            'tipo_id' => 'required|exists:carta_tipos,id',
+        ]);
 
-            $carta = Carta::create($request->all());
-            return response()->json($carta, 201);
-        } catch (\Exception $e) {
-            return Erro::tratar($e->getMessage(), $e->getCode());
-        }
+        Carta::create($request->all());
+
+        return redirect()->route('cartas.cadastro');
     }
 
-    public function show(string $id) {
+    public function show(string $id)
+    {
         try {
             $carta = Carta::findOrFail($id);
-            return response()->json($carta);
+            return view('cartas-cadastro', compact('carta'));
         } catch (\Exception $e) {
-            return Erro::tratar($e->getMessage(), $e->getCode());
+            return view('cartas-cadastro');
         }
     }
 
