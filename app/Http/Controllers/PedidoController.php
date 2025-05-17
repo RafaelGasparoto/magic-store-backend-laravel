@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\utils\Erro;
 use App\Models\Pedido;
+use App\Models\Carrinho;
 
 class PedidoController extends Controller
 {
@@ -18,37 +19,36 @@ class PedidoController extends Controller
         }
     }
 
-    public function store(Request $request)
+    public function comprar(Request $request)
     {
-        try {
-            $request->validate([
-                'usuario_id' => 'required|exists:usuarios,id',
-                'items' => 'required|array',
+        $usuario_id = 1;
+
+        $carrinho = Carrinho::where('usuario_id', $usuario_id)->with('items')->firstOrFail();
+        $total = $carrinho->items->sum(function ($item) {
+            return $item->quantidade * $item->preco;
+        });
+
+        $forma_pagamento = $request->input('forma_pagamento');
+
+        $pedido = Pedido::create([
+            'usuario_id' => $usuario_id,
+            'total' => $total,
+            'forma_pagamento' => $forma_pagamento,
+            'quantidade_itens' => $carrinho->items->count(),
+        ]);
+
+        foreach ($carrinho->items as $item) {
+            $pedido->items()->create([
+                'carta_id' => $item->carta_id,
+                'quantidade' => $item->quantidade,
+                'preco' => $item->preco,
             ]);
-
-            $request->request->add(['quantidade_itens' => count($request->input('items'))]);
-
-            $total = 0;
-            foreach ($request->input('items') as $item) {
-                $total += $item['quantidade'] * $item['preco'];
-            }
-
-            $request->request->add(['total' => $total]);
-
-            $pedido = Pedido::create($request->all());
-
-            foreach ($request->input('items') as $item) {
-                $pedido->items()->create([
-                    'carta_id' => $item['carta_id'],
-                    'quantidade' => $item['quantidade'],
-                    'preco' => $item['preco'],
-                ]);
-            }
-
-            return response()->json($pedido, 201);
-        } catch (\Exception $e) {
-            return Erro::tratar($e->getMessage(), $e->getCode());
         }
+
+        $carrinho->items()->delete();
+        $carrinho->delete();
+
+        return redirect()->route('home');
     }
 
     public function show(string $id)

@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->foreignId('usuario_id')->constrained('usuarios');
-            $table->float('total');
-            $table->string('quantidade_itens');
+            $table->float('total')->default(0);
+            $table->string('quantidade_itens')->default(0);
+            $table->string('forma_pagamento')->nullable();
         });
     }
 
